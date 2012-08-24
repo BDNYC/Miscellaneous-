@@ -1,5 +1,6 @@
 ''' 
 This procedure reads and calculates J-K colors for all objects in Paper XII, and then plot their average and extreme points as a function of spectral type. It plots them together with Faherty-12 average and extreme points.
+Until we get a NIR spectrum of U50171 (0835+1953, L5 standard) with uncertainties, it will be manually excluded from this plot in step (10) of the procedure, since it is not used to calculate the L5 template.
 '''
 
 def makeplot(dataEB1, dataEB2):
@@ -270,17 +271,22 @@ for binIdx, bin in enumerate(dataLs[6]):
         inclEB1[binIdx] = False
 
 # 9. EXCLUDE SPECIAL OBJECTS FROM THE KELLE'S DATA SET -----------------------------
-for spIdx, sp in enumerate(dataLs[0]):
+for refIdx, ref in enumerate(dataLs[0]):
     # Exclude dusty, blue, and pec objects
-    if dataLs[4][spIdx] == 'Yes' or dataLs[5][spIdx] == 'Yes' or \
-                                                dataLs[7][spIdx] == 'Yes':
-        inclEB1[spIdx] = False
+    if dataLs[4][refIdx] == 'Yes' or dataLs[5][refIdx] == 'Yes' or \
+                                                dataLs[7][refIdx] == 'Yes':
+        inclEB1[refIdx] = False
 
-# 10. PREPARE DATA TO PLOT ----------------------------------------------------------
+# 10. MANUALLY EXCLUDE U50171 (0835+1953) (L5 STANDARD, MISSING UNCERTAINTIES) -----
+for refIdx, ref in enumerate(dataLs[0]):
+    if ref == 50171:
+        inclEB1[refIdx] = False
+
+# 11. PREPARE DATA TO PLOT ----------------------------------------------------------
 toplotEB1 = np.array([np.array(dataLs[3])[inclEB1], np.array(dataLs[1])[inclEB1]])
 toplotEB2 = np.array([AVGJK, AVGJKMIN, AVGJKMAX, COUNTS])
 
-# 11. PLOT DATA --------------------------------------------------------------------
+# 12. PLOT DATA --------------------------------------------------------------------
 figObj = makeplot(toplotEB1, toplotEB2)
 figObj.savefig(FOLDER_ROOT + FOLDER_OUT + 'JK_JF12_' + GRAV.lower() +  \
               '.pdf', dpi=600)
