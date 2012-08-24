@@ -132,7 +132,7 @@ def makeplot(dataEB1, dataEB2):
     loc = (6. - X_OFFSET, dataEB2[1,6]) # The min J-K value at L6
     loctext = (-10, -65)
     linetype = dict(arrowstyle='-', shrinkB=4, shrinkA=2, color=RED, relpos=(1,0))
-    plt.annotate('Faherty \'12', xy=loc, xytext=loctext, xycoords='data', \
+    plt.annotate('Faherty et al. \'12', xy=loc, xytext=loctext, xycoords='data', \
                  textcoords='offset points', fontsize=13, color=RED, \
                  ha='right', va='bottom', arrowprops=linetype) 
     
