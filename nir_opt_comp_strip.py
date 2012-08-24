@@ -584,8 +584,7 @@ def plotspec(specData, bandNames, limits, objID, classType, grav=None,plotInstru
             if plotInstr == 'exclude':
                 continue
             # Skip special objects if only template requested to be plotted
-            if not plotSpecial:
-                if plotInstr == 'special':
+            if not plotSpecial and plotInstr == 'special':
                     continue
             
             # Set lines styles
@@ -651,6 +650,9 @@ def plotspec(specData, bandNames, limits, objID, classType, grav=None,plotInstru
                     continue
                 # U50171
                 elif objID[specIdx].startswith('0835+1953'):
+                    continue
+                # U50188
+                elif objID[specIdx].startswith('0328+2302'):
                     continue
             
             subPlot.plot(spec[0], spec[1], color=plotColor, linestyle=lnStyle, \
@@ -780,7 +782,7 @@ def main(spInput, grav='', plot=True, templ=False, std=False, special=False):
     colNameOPTS = HDR_FILE_IN_STD[3]
     
     # For TXT exclude-objects file
-    EXCL_FILE = 'Exclude_Objs.txt'   # ASCII file w/ U#s of objects to exclude
+    EXCL_FILE = 'Exclude_Objs_special.txt'   # ASCII file w/ U#s of objects to exclude
     
     
     # 3. READ DATA FROM INPUT FILES-----------------------------------------------------
@@ -809,7 +811,6 @@ def main(spInput, grav='', plot=True, templ=False, std=False, special=False):
     uniSpType = [None] * len(data[colNameType])
     for sIdx,sType in enumerate(data[colNameType]):
         uniSpType[sIdx] = sType.decode('utf-8')
-    
     data[colNameType] = numpy.array(uniSpType)
     
     # 4.2 Calculate J-K Color And Add J-K Column
@@ -1172,6 +1173,8 @@ def main(spInput, grav='', plot=True, templ=False, std=False, special=False):
                             continue
                         elif refs[spIdx] == '50171':
                             continue
+                        elif refs[spIdx] == '50188':
+                            continue
                         templSpecs.append(spex)
                     
                     else:
@@ -1182,6 +1185,7 @@ def main(spInput, grav='', plot=True, templ=False, std=False, special=False):
                             templSpecs.append(spex)
                         else:
                             print str(objRef[spIdx]) + ' excluded from template'
+                            templInstructions[spIdx] = False
             
             # Calculate template spectrum
             if len(templSpecs) > 1:
@@ -1211,22 +1215,45 @@ def main(spInput, grav='', plot=True, templ=False, std=False, special=False):
             O_template = None
     
     
-    # 13. PLOT DATA --------------------------------------------------------------------
+    # 13. EXCLUDE FROM PLOTTING OBJECTS NOT USED IN TEMPLATE CALCULATION ----------------
+    for tIdx, templ in enumerate(templInstructions):
+        if not templ:
+            if special:
+                # Manually exclude U50171 (0835+1953, Davy's L5 NIR standard)
+                # Its NIR spectrum has no uncertainties, so it is not used in template
+                if refs[tIdx] == '50171':
+                    plotInstructions[tIdx] = 'exclude'
+            else:
+                plotInstructions[tIdx] = 'exclude'
+    
+    
+    # 14. PLOT DATA --------------------------------------------------------------------
     if plot:
         # Gather info on each target
         objInfo = [None] * len(refs)
         for posIdx,spIdx in enumerate(specIdx[specSortIdx]):
             tmpDesig  = data[colNameDesig][spIdx]
             tmpJK     = data[colNameJK][spIdx]
+            
+            # Append description of special object to its spectral type when missing
             if binaryObjs[posIdx]:
                 spDesc = 'bin'
             elif blueObjs[posIdx]:
                 spDesc = 'blue'
             elif dustyObjs[posIdx]:
                 spDesc = 'dust'
+            elif pecObjs[posIdx]:
+                spDesc = 'pec'
             else:
                 spDesc = ''
-            tmpSPtype = data[colNameType][spIdx] + spDesc
+            try:
+                loc = data[colNameType][spIdx].index(spDesc)
+            except ValueError:
+                loc = None
+            if loc is None:
+                tmpSPtype = data[colNameType][spIdx] + spDesc
+            else:
+                tmpSPtype = data[colNameType][spIdx]
             tmpSPtype = tmpSPtype + ' ' * (8 - len(tmpSPtype)) # For alignment purposes
             
             objInfo[posIdx] = (tmpDesig + ' ' + tmpSPtype + ' ' + '%.2f' %tmpJK)
@@ -1247,7 +1274,7 @@ def main(spInput, grav='', plot=True, templ=False, std=False, special=False):
                       grav.lower() + sptxt + '.pdf', dpi=600)
     
     
-    # 14. DETERMINE OUTPUT -------------------------------------------------------------
+    # 15. DETERMINE OUTPUT -------------------------------------------------------------
     if templ:
         if std:
             return O_template, O_standard
