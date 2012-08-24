@@ -555,6 +555,9 @@ def plotspec(specData, bandNames, limits, objID, classType, grav=None, plotInstr
                 # U50171
                 elif objID[specIdx].startswith('0835+1953'):
                     continue
+                # U50188
+                elif objID[specIdx].startswith('0328+2302'):
+                    continue
             
             subPlot.plot(spec[0], spec[1], color=plotColor, linestyle=lnStyle, \
                         dash_joinstyle='round', linewidth=lnWidth, label=objLabel, \
