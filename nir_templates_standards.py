@@ -226,7 +226,7 @@ def plotspec(specData, bandNames, limits, objID, plotInstructions, plotInput=Non
             
             # add texts
             subPlot.text(xpos + 0.2, ypos - 0.05, 'Templates', fontsize=8, color=BLACK)
-            subPlot.text(xpos + 0.2, ypos - 0.23, 'NIR Standards (K11)', fontsize=8, \
+            subPlot.text(xpos + 0.2, ypos - 0.23, 'NIR Standards (K10)', fontsize=8, \
                          color=BLACK)
             subPlot.text(xpos + 0.08, ypos - 0.4, '* L9 NIR standard vs L8 template', \
                          fontsize=6, color=BLACK)
