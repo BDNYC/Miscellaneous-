@@ -43,9 +43,9 @@ def makeplot(dataEB1, dataEB2):
         if len(idxtp) != 0:
             bins.append(dataEB1[1,idxtp])
             labels.append('L' + str(tp - 11))
-        # Rememeber the smallest J-K value of L6 to annotate label there later
+        # Rememeber the smallest J-K value of L5 to annotate label there later
         if tp == 16:
-            lblymin = np.min(dataEB1[1,idxtp])        
+            lblymin = np.min(dataEB1[1,idxtp])
     
     # 4) Initialize subplot
     ax = fig.add_subplot(1,1,1, position=[0.12,0.11,0.85,0.84])
@@ -118,11 +118,12 @@ def makeplot(dataEB1, dataEB2):
     # Add axes labels
     ax.set_xlabel(X_LABEL)
     ax.set_ylabel(Y_LABEL)
-    ax.set_ylim(0.9, 2.3)
+    ax.set_ylim(0.78, 2.42)
     ax.set_xlim(0.5, 9.5)
     
     # Add tick labels
     plt.xticks(range(1,10), labels, size=14)
+    plt.yticks(np.arange(8,25,2) / 10.)
     
     # Add horizontal grid
     ax.yaxis.grid(True, linestyle='-', which='major', color='lightgrey', alpha=0.8)
@@ -130,7 +131,7 @@ def makeplot(dataEB1, dataEB2):
     
     # 8) Annotate Data Labels
     # Annotate Jackie data set
-    loc = (6. - X_OFFSET, dataEB2[1,6]) # The min J-K value at L6
+    loc = (6. - X_OFFSET, dataEB2[1,5]) # The min J-K value at L5
     loctext = (-10, -65)
     linetype = dict(arrowstyle='-', shrinkB=4, shrinkA=2, color=RED, relpos=(1,0))
     plt.annotate('Faherty et al. \'12', xy=loc, xytext=loctext, xycoords='data', \
@@ -138,7 +139,7 @@ def makeplot(dataEB1, dataEB2):
                  ha='right', va='bottom', arrowprops=linetype) 
     
     # Annotate Paper XII data set
-    loc = (6. + X_OFFSET, lblymin) # The min J-K value at L6
+    loc = (6. + X_OFFSET, lblymin) # The min J-K value at L5
     loctext = (10, -60)
     linetype = dict(arrowstyle='-', shrinkB=4, shrinkA=2, color=BLACK, relpos=(0,0))
     plt.annotate('Paper XII', xy=loc, xytext=loctext, xycoords='data', \
@@ -159,9 +160,9 @@ import pdb
 # 2. SET UP VARIABLES --------------------------------------------------------------
 # Faherty-12 J-K averages, extremes, and counts, L0 to L8 in sequential order
 AVGJK    = np.array([1.3,1.35,1.48,1.64,1.69,1.72,1.84,1.75,1.85])
-AVGJKMIN = np.array([1.,1.,1.2,1.2,1.3,1.4,1.4,1.4,1.4])
-AVGJKMAX = np.array([1.8,1.8,1.8,2.,2.,2.,2.,2.,2.])
-COUNTS   = np.array([10,10,10,10,10,10,10,10,10])
+AVGJKMIN = np.array([0.809,0.95,0.974,1.136,1.168,1.205,1.386,1.412,1.594])
+AVGJKMAX = np.array([1.98,1.926,1.946,2.103,2.178,2.033,2.382,2.079,2.115])
+COUNTS   = np.array([102,95,60,51,33,28,13,9,10])
 
 # General variables
 GRAV = 'f'
